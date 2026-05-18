@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>福岡2026自由行 | FIT Travel App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-blue: #E6F2F5;     /* 富士淺藍 */
+            --primary-dark: #A5CAD6;     /* 富士藍強調色 */
+            --bg-warm-gray: #F7F7F6;     /* 暖灰背景 */
+            --surface-white: #FFFFFF;    /* 雪白卡片面 */
+            --text-main: #3A3F42;        /* 炭灰主字 */
+            --text-sub: #8A9296;         /* 苔灰副字 */
+            --accent-red: #DE361A;       /* 警告紅 */
+            
+            --tag-food-bg: #FFECEB;   --tag-food-txt: #E05638;
+            --tag-shop-bg: #FFF9E6;   --tag-shop-txt: #D4A316;
+            --tag-photo-bg: #EBF7F2;  --tag-photo-txt: #2D9C6C;
+            
+            --radius-lg: 24px;
+            --radius-md: 14px;
+            --shadow-soft: 0 10px 30px rgba(165, 180, 185, 0.12);
+            --font-japan: 'Zen Maru Gothic', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: var(--font-japan);
+            background-color: var(--bg-warm-gray);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 100px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--bg-warm-gray);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ⛩️ Header 頂部視覺 (使用用戶提供的白色鳥居圖片) */
+        header {
+            position: relative;
+            height: 250px;
+            /* 套用用戶提供的真實圖片路徑 */
+            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(247,247,246,1) 98%), 
+                        url('https://file.notion.so/f/f/064e6f4a-959c-4573-90d5-502a51f8876c/6b447e17-761d-4009-8438-239169f4640d/Snaphead.jpg?table=block&id=1418728a-7848-8097-91f8-f421f64923e3&spaceId=064e6f4a-959c-4573-90d5-502a51f8876c&expirationTimestamp=1732046400000&signature=9Y2HhK_m9A5I96V-V1K1qWJ6I4I5Z6V1K1qWJ6I4I5Z&downloadName=Snaphead.jpg');
+            /* 如果上方網址因權限失效，請替換為本地路徑或新的URL */
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Sakurai_no_Futamigaura_of_Itoshima_20180430-1.jpg/1200px-Sakurai_no_Futamigaura_of_Itoshima_20180430-1.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 24px;
+        }
+        header h1 { font-size: 28px; font-weight: 700; color: #1A2022; text-shadow: 0 2px 10px rgba(255,255,255,0.9); }
+        header .date-badge { font-size: 14px; color: #3A3F42; font-weight: 500; display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+
+        /* 🗂️ Tabs 分頁導覽 */
+        .tabs-container {
+            padding: 12px 16px;
+            background: var(--surface-white);
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .tabs-container::-webkit-scrollbar { display: none; }
+        .tab-item {
+            padding: 8px 18px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-sub);
+            background: var(--bg-warm-gray);
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.25s ease;
+        }
+        .tab-item.active { background-color: var(--primary-blue); color: #2A5A68; font-weight: 700; }
+
+        /* 面板顯示控制 */
+        .main-panel { display: none; padding: 0 16px; animation: fadeIn 0.3s ease-out; }
+        .main-panel.active { display: block; }
+
+        /* 📅 Day Selector */
+        .day-selector { display: flex; gap: 10px; padding: 16px 0; overflow-x: auto; }
+        .day-selector::-webkit-scrollbar { display: none; }
+        .day-btn {
+            flex: 0 0 65px; height: 65px; background: var(--surface-white); border: 1px solid rgba(0,0,0,0.03);
+            border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .day-btn .d-num { font-size: 11px; color: var(--text-sub); }
+        .day-btn .d-date { font-size: 15px; font-weight: 700; }
+        .day-btn.active { background: var(--primary-blue); border-color: var(--primary-dark); color: #2A5A68; }
+
+        .day-content { display: none; }
+        .day-content.active { display: block; }
+        .day-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+        /* 🃏 景點卡片 */
+        .spot-card {
+            background: var(--surface-white); border-radius: var(--radius-lg); padding: 20px;
+            margin-bottom: 16px; box-shadow: var(--shadow-soft); border: 1px solid rgba(230, 242, 245, 0.6);
+        }
+        .spot-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .spot-category { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: var(--primary-blue); color: #2A5A68; }
+        .hotel-tag { background: #F0EDF5 !important; color: #70539E !important; }
+        .spot-name { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
+        .spot-desc { font-size: 13.5px; color: var(--text-sub); margin-bottom: 12px; }
+        
+        .tag-group { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .info-tag { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 6px; }
+        .info-tag.eat { background: var(--tag-food-bg); color: var(--tag-food-txt); }
+        .info-tag.buy { background: var(--tag-shop-bg); color: var(--tag-shop-txt); }
+        .info-tag.photo { background: var(--tag-photo-bg); color: var(--tag-photo-txt); }
+
+        .smart-tools { background: var(--bg-warm-gray); border-radius: var(--radius-md); padding: 12px; font-size: 12px; }
+        .tool-item { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+        .tool-item i { color: var(--text-sub); width: 14px; }
+        
+        .btn-nav {
+            display: inline-flex; align-items: center; gap: 4px; background: #4285F4; color: white;
+            text-decoration: none; padding: 6px 12px; border-radius: 8px; font-weight: 500; margin-top: 8px; font-size: 11px;
+        }
+
+        /* 👚 天氣提示 */
+        .weather-style-card {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #FFFFFF 100%);
+            border-radius: var(--radius-lg); padding: 16px; margin: 16px 0 24px 0;
+            border: 1px solid rgba(165, 202, 214, 0.3);
+        }
+        .weather-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 700; }
+        .style-tip { font-size: 12.5px; color: var(--text-main); background: rgba(255,255,255,0.6); padding: 8px; border-radius: var(--radius-md); }
+
+        /* ➕ 增加按鈕 */
+        .btn-add-spot {
+            width: 100%; padding: 12px; background: var(--surface-white); border: 2px dashed var(--primary-dark);
+            border-radius: var(--radius-md); color: #2A5A68; font-weight: 700; font-size: 14px;
+            display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; margin-bottom: 16px;
+        }
+
+        /* 💰 貨幣兌換器 */
+        .converter-box { background: var(--surface-white); padding: 20px; border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); margin-top: 10px; }
+        .currency-input-group { display: flex; align-items: center; background: var(--bg-warm-gray); padding: 10px 16px; border-radius: var(--radius-md); margin-bottom: 12px; }
+        .currency-label { width: 60px; font-weight: 700; font-size: 14px; }
+        .currency-input { border: none; background: transparent; width: 100%; font-size: 18px; font-weight: 700; text-align: right; font-family: var(--font-japan); }
+        .warning-text { color: var(--accent-red); font-size: 12px; font-weight: 700; margin-top: 12px; text-align: center; }
+
+        /* 🗣️ 翻譯器 */
+        .translator-box { background: var(--surface-white); padding: 20px; border-radius: var(--radius-lg); box-shadow: var(--shadow-soft); margin-top: 10px; }
+        .trans-result { background: var(--primary-blue); padding: 12px; border-radius: var(--radius-md); margin-top: 12px; font-weight: 700; color: #2A5A68; min-height: 44px; }
+
+        /* ⚓ 底部導覽 */
+        .bottom-nav {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 448px;
+            height: 64px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            border-radius: 32px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1); display: flex; justify-content: space-around; align-items: center; z-index: 1000;
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sub); text-decoration: none; font-size: 10px; font-weight: 500; background: none; border: none; }
+        .nav-item.active { color: #2A5A68; font-weight: 700; }
+        .nav-item i { font-size: 20px; margin-bottom: 2px; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4);
+            display: none; justify-content: center; align-items: flex-end; z-index: 2000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            width: 100%; max-width: 480px; background: var(--surface-white); border-top-left-radius: var(--radius-lg);
+            border-top-right-radius: var(--radius-lg); padding: 24px; animation: slideUp 0.3s ease-out;
+        }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #E1E6E8; border-radius: 10px; font-family: var(--font-japan); }
+        .btn-submit { width: 100%; padding: 12px; background: #2A5A68; color: white; border: none; border-radius: 12px; font-weight: 700; margin-top: 10px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <h1>福岡2026自由行</h1>
+        <div class="date-badge">
+            <i class="fa-regular fa-calendar"></i>
+            <span>2026.07.25 — 07.31 (7 Days)</span>
+        </div>
+    </header>
+
+    <div class="tabs-container">
+        <button class="tab-item active" onclick="switchTab('tab-schedule', this)">行程</button>
+        <button class="tab-item" onclick="switchTab('tab-weather', this)">天氣</button>
+        <button class="tab-item" onclick="switchTab('tab-guide', this)">指南</button>
+        <button class="tab-item" onclick="switchTab('tab-currency', this)">貨幣兌換</button>
+        <button class="tab-item" onclick="switchTab('tab-hotel', this)">酒店</button>
+    </div>
+
+    <div id="tab-schedule" class="main-panel active">
+        <div class="day-selector">
+            <div class="day-btn active" onclick="switchDay(1)"><span class="d-num">Day 1</span><span class="d-date">7/25</span></div>
+            <div class="day-btn" onclick="switchDay(2)"><span class="d-num">Day 2</span><span class="d-date">7/26</span></div>
+            <div class="day-btn" onclick="switchDay(3)"><span class="d-num">Day 3</span><span class="d-date">7/27</span></div>
+            <div class="day-btn" onclick="switchDay(4)"><span class="d-num">Day 4</span><span class="d-date">7/28</span></div>
+            <div class="day-btn" onclick="switchDay(5)"><span class="d-num">Day 5</span><span class="d-date">7/29</span></div>
+            <div class="day-btn" onclick="switchDay(6)"><span class="d-num">Day 6</span><span class="d-date">7/30</span></div>
+            <div class="day-btn" onclick="switchDay(7)"><span class="d-num">Day 7</span><span class="d-date">7/31</span></div>
+        </div>
+
+        <div id="day1" class="day-content active">
+            <div class="day-title"><i class="fa-solid fa-location-dot"></i> 7/25 · 佐賀唐津</div>
+            <div class="spot-card">
+                <div class="spot-header"><span class="spot-category hotel-tag">酒店入住</span></div>
+                <div class="spot-name">Mercure Saga Karatsu Resort</div>
+                <div class="spot-desc">唐津美居度假酒店。近虹之松原，享受河畔度假氛圍。</div>
+                <div class="smart-tools">
+                    <div class="tool-item"><i class="fa-solid fa-map-pin"></i> <span>佐賀県唐津市東唐津4-9-20</span></div>
+                    <div class="tool-item"><i class="fa-solid fa-clock"></i> <span>Check-in: 15:00</span></div>
+                    <a href="https://maps.google.com/?q=Mercure+Saga+Karatsu+Resort" target="_blank" class="btn-nav"><i class="fa-solid fa-compass"></i> Maps 導航</a>
+                </div>
+            </div>
+            <button class="btn-add-spot" onclick="openModal(1, '佐賀唐津')"><i class="fa-solid fa-plus"></i> 增加一個新行程</button>
+            <div class="added-spots"></div>
+            <div class="weather-style-card">
+                <div class="weather-info"><span>🌤️ 晴時多雲</span><span>28°C - 33°C</span></div>
+                <div class="style-tip"><strong>建議穿著：</strong> 透氣亞麻襯衫 + 遮陽帽。唐津海風舒適，注意防曬。</div>
