@@ -135,6 +135,7 @@
             margin-top: 12px;
             border-top: 1px dashed #EEE;
             padding-top: 8px;
+            flex-wrap: wrap;
         }
         .drag-btn {
             background: none;
@@ -145,6 +146,10 @@
             display: flex;
             align-items: center;
             gap: 4px;
+        }
+        .drag-btn.edit-btn {
+            color: #666;
+            font-weight: 500;
         }
         .pin-btn {
             color: #2F80ED;
@@ -413,41 +418,32 @@
         <div id="shopping-list"></div>
     </div>
 
-    <!-- 7. 景點 TAB (已升級全新複合動態篩選器) -->
+    <!-- 7. 景點 TAB -->
     <div id="tab-explore" class="content-section">
         <div class="filter-container">
-            <!-- 分區：改為指定區域 -->
             <select id="filter-region" class="filter-select" onchange="filterExplore()">
                 <option value="">所有分區</option>
-                <option value="福岡">福岡</option>
-                <option value="博多">博多</option>
-                <option value="天神">天神</option>
-                <option value="太宰府">太宰府</option>
-                <option value="糸島">糸島</option>
-                <option value="佐賀">佐賀</option>
+                <option value="福岡">福岡</option><option value="博多">博多</option><option value="天神">天神</option><option value="太宰府">太宰府</option><option value="糸島">糸島</option><option value="佐賀">佐賀</option>
             </select>
-            <!-- 細分區：允許使用者輸入後自動動態生成 -->
             <select id="filter-subregion" class="filter-select" onchange="filterExplore()">
                 <option value="">所有細分區</option>
             </select>
-            <!-- 分類：景點🏖️/購物🛍️/餐廳🍴/租車🚗 -->
             <select id="filter-cate" class="filter-select" onchange="filterExplore()">
                 <option value="">所有分類</option>
-                <option value="景點🏖️">景點🏖️</option>
-                <option value="購物🛍️">購物🛍️</option>
-                <option value="餐廳🍴">餐廳🍴</option>
-                <option value="租車🚗">租車🚗</option>
+                <option value="景點🏖️">景點🏖️</option><option value="購物🛍️">購物🛍️</option><option value="餐廳🍴">餐廳🍴</option><option value="租車🚗">租車🚗</option>
             </select>
         </div>
         <button class="btn-primary" style="margin-bottom: 16px;" onclick="openModal('modal-add-explore')"><i class="fa-solid fa-plus"></i> Add 想去嘅景點</button>
         <div id="explore-list"></div>
     </div>
 
-    <!-- ==================== MODALS ==================== -->
-    <!-- 新增行程 Modal -->
+    <!-- ==================== MODALS (新增/編輯表單彈窗) ==================== -->
+    
+    <!-- 1. 行程 Modal -->
     <div id="modal-add-itinerary" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h3>增加一個新行程</h3><i class="fa-solid fa-xmark" onclick="closeModal('modal-add-itinerary')"></i></div>
+            <div class="modal-header"><h3 id="iti-modal-title">增加一個新行程</h3><i class="fa-solid fa-xmark" onclick="closeModal('modal-add-itinerary')"></i></div>
+            <input type="hidden" id="form-iti-id">
             <div class="form-group"><label>日期選取</label>
                 <select id="form-iti-day" class="form-control">
                     <option value="1">2026.07.25 (Day 1)</option><option value="2">2026.07.26 (Day 2)</option><option value="3">2026.07.27 (Day 3)</option>
@@ -456,34 +452,34 @@
                 </select>
             </div>
             <div class="form-group"><label>預計到達時間</label><input type="time" id="form-iti-time" class="form-control" value="12:00"></div>
-            <div class="form-group"><label>景點名稱</label><input type="text" id="form-iti-name" class="form-control" placeholder="例如：太宰府天滿宮"></div>
+            <div class="form-group"><label>景點名稱</label><input type="text" id="form-iti-name" class="form-control"></div>
             <div class="form-group"><label>描述</label><textarea id="form-iti-desc" class="form-control"></textarea></div>
             <div class="form-group"><label>景點分類</label><select id="form-iti-cate" class="form-control"><option>食物</option><option>活動</option><option>購物</option><option>景點</option><option>酒店</option><option>交通</option></select></div>
             <div class="form-group"><label>標籤</label><select id="form-iti-tag" class="form-control"><option value="tag-photo">必拍</option><option value="tag-eat">必吃</option><option value="tag-buy">必買</option></select></div>
-            <div class="form-group"><label>Google Maps 鏈接</label><input type="text" id="form-iti-maps" class="form-control" placeholder="https://goo.gl/maps/..."></div>
-            <button class="btn-primary" onclick="submitItinerary()">確認新增</button>
+            <div class="form-group"><label>Google Maps 鏈接</label><input type="text" id="form-iti-maps" class="form-control"></div>
+            <button class="btn-primary" onclick="submitItinerary()">確認儲存</button>
         </div>
     </div>
 
-    <!-- Add Something Modal -->
+    <!-- 2. Add Something Modal -->
     <div id="modal-add-something" class="modal">
         <div class="modal-content">
             <div class="modal-header"><h3>Add Something</h3><i class="fa-solid fa-xmark" onclick="closeModal('modal-add-something')"></i></div>
-            <div class="form-group"><label>Name</label><input type="text" id="form-some-name" class="form-control" placeholder="標題"></div>
+            <div class="form-group"><label>Name</label><input type="text" id="form-some-name" class="form-control"></div>
             <div class="form-group"><label>資訊詳情</label><textarea id="form-some-detail" class="form-control"></textarea></div>
             <button class="btn-primary" onclick="submitSomething()">確認新增</button>
         </div>
     </div>
 
-    <!-- Add Hotel Modal -->
+    <!-- 3. 酒店 Modal -->
     <div id="modal-add-hotel" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h3>Add Hotel</h3><i class="fa-solid fa-xmark" onclick="closeModal('modal-add-hotel')"></i></div>
-            <div class="form-group"><label>酒店名稱</label><input type="text" id="form-hotel-name" class="form-control" placeholder="住宿名稱"></div>
-            <div class="form-group"><label>地址</label><input type="text" id="form-hotel-addr" class="form-control" placeholder="完整地址"></div>
-            
+            <div class="modal-header"><h3 id="hotel-modal-title">Add Hotel</h3><i class="fa-solid fa-xmark" onclick="closeModal('modal-add-hotel')"></i></div>
+            <input type="hidden" id="form-hotel-id">
+            <div class="form-group"><label>酒店名稱</label><input type="text" id="form-hotel-name" class="form-control"></div>
+            <div class="form-group"><label>地址</label><input type="text" id="form-hotel-addr" class="form-control"></div>
             <div class="form-group">
-                <label>入住日期 (可複選多天 🗓️)</label>
+                <label>入住日期 (可多選)</label>
                 <div class="checkbox-group">
                     <label class="checkbox-item"><input type="checkbox" name="hotel-days" value="1"> 25/07 (D1)</label>
                     <label class="checkbox-item"><input type="checkbox" name="hotel-days" value="2"> 26/07 (D2)</label>
@@ -494,37 +490,37 @@
                     <label class="checkbox-item"><input type="checkbox" name="hotel-days" value="7"> 31/07 (D7)</label>
                 </div>
             </div>
-
             <div class="form-group"><label>入住及退房時間說明</label><input type="text" id="form-hotel-time" class="form-control" value="CI: 15:00 / CO: 11:00"></div>
-            <div class="form-group"><label>Google Maps 鏈接</label><input type="text" id="form-hotel-maps" class="form-control" placeholder="https://goo.gl/maps/..."></div>
-            <button class="btn-primary" onclick="submitHotel()">確認新增</button>
+            <div class="form-group"><label>Google Maps 鏈接</label><input type="text" id="form-hotel-maps" class="form-control"></div>
+            <button class="btn-primary" onclick="submitHotel()">確認儲存</button>
         </div>
     </div>
 
-    <!-- Need to buy Modal -->
+    <!-- 4. 購物 Modal -->
     <div id="modal-add-shopping" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h3>Need to buy</h3><i class="fa-solid fa-xmark" onclick="closeModal('modal-add-shopping')"></i></div>
+            <div class="modal-header"><h3 id="shop-modal-title">Need to buy</h3><i class="fa-solid fa-xmark" onclick="closeModal('modal-add-shopping')"></i></div>
+            <input type="hidden" id="form-shop-id">
             <div class="form-group"><label>Name</label><input type="text" id="form-shop-name" class="form-control"></div>
             <div class="form-group"><label>購買地點</label><input type="text" id="form-shop-loc" class="form-control"></div>
             <div class="form-group"><label>上傳圖片 (預設圖類別)</label><select id="form-shop-img" class="form-control"><option value="🍜">🍜 博多拉麵伴手禮</option><option value="🍓">🍓 博多明太子/草莓點心</option></select></div>
             <div class="form-group"><label>Google Maps 鏈接</label><input type="text" id="form-shop-maps" class="form-control"></div>
-            <button class="btn-primary" onclick="submitShopping()">確認新增</button>
+            <button class="btn-primary" onclick="submitShopping()">確認儲存</button>
         </div>
     </div>
 
-    <!-- Add 想去嘅景點 Modal -->
+    <!-- 5. 想去嘅景點 Modal -->
     <div id="modal-add-explore" class="modal">
         <div class="modal-content">
-            <div class="modal-header"><h3>Add 想去嘅景點</h3><i class="fa-solid fa-xmark" onclick="closeModal('modal-add-explore')"></i></div>
-            <div class="form-group"><label>景點名稱</label><input type="text" id="form-exp-name" class="form-control" placeholder="例如：一蘭之森"></div>
+            <div class="modal-header"><h3 id="exp-modal-title">Add 想去嘅景點</h3><i class="fa-solid fa-xmark" onclick="closeModal('modal-add-explore')"></i></div>
+            <input type="hidden" id="form-exp-id">
+            <div class="form-group"><label>景點名稱</label><input type="text" id="form-exp-name" class="form-control"></div>
             <div class="form-group"><label>分區</label>
                 <select id="form-exp-region" class="form-control">
                     <option>福岡</option><option>博多</option><option>天神</option><option>太宰府</option><option>糸島</option><option>佐賀</option>
                 </select>
             </div>
-            <!-- 細分區：手動自定義輸入 -->
-            <div class="form-group"><label>細分區 (手動輸入，系統會自動加到篩選選單 💡)</label><input type="text" id="form-exp-sub" class="form-control" placeholder="例如：中洲 / 能古島 / 唐津"></div>
+            <div class="form-group"><label>細分區 (手動輸入)</label><input type="text" id="form-exp-sub" class="form-control"></div>
             <div class="form-group"><label>分類</label>
                 <select id="form-exp-cate" class="form-control">
                     <option>景點🏖️</option><option>購物🛍️</option><option>餐廳🍴</option><option>租車🚗</option>
@@ -532,11 +528,11 @@
             </div>
             <div class="form-group"><label>地址</label><input type="text" id="form-exp-addr" class="form-control"></div>
             <div class="form-group"><label>Google Maps 鏈接</label><input type="text" id="form-exp-maps" class="form-control"></div>
-            <button class="btn-primary" onclick="submitExplore()">確認新增</button>
+            <button class="btn-primary" onclick="submitExplore()">確認儲存</button>
         </div>
     </div>
 
-    <!-- 底部浮動導覽條 -->
+    <!-- 底部導覽條 -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('itinerary', this)"><i class="fa-solid fa-route"></i>行程</div>
         <div class="nav-item" onclick="switchTab('weather', this)"><i class="fa-solid fa-cloud-sun"></i>天氣</div>
@@ -553,29 +549,32 @@
     let currentDay = 1;
     const exchangeRatejpy = 20.15; 
 
-    // 核心資料庫
     let itineraries = [];
     let guides = [];
     let hotels = [];
     let shoppings = [];
     let explores = [];
 
-    // 預設福岡範例資料 (符合全新分區與細分區規則)
-    const defaultItineraries = [{ id: 1, day: 1, time: "12:30", name: "博多一雙拉麵 🍜", desc: "2026.07.25 福岡落地首餐！極度濃郁的泡沫系豚骨拉麵名店。", cate: "食物", tag: "tag-eat", maps: "https://maps.app.goo.gl/fukuoka-isshou" }];
+    // 預設行程、指南、購物、景點資料
+    const defaultItineraries = [{ id: 1001, day: 1, time: "12:30", name: "博多一雙拉麵 🍜", desc: "福岡落地首餐！極度濃郁的泡沫系豚骨拉麵名店。", cate: "食物", tag: "tag-eat", maps: "https://maps.app.goo.gl/fukuoka-isshou" }];
     const defaultGuides = [
-        { id: 1, name: "日本自駕必讀：高速公路 KEP 卡", detail: "過路費吃到飽卡片，租車時記得在櫃檯一併確認是否已開通領取！", pinned: true },
-        { id: 2, name: "日本加油站自助手續", detail: "認明紅色「Regular」汽油，螢幕可選繁體中文，可用信用卡付款。", pinned: false }
+        { id: 2001, name: "日本自駕必讀：高速公路 KEP 卡", detail: "過路費吃到飽卡片，租車時記得在櫃檯一併確認是否已開通領取！", pinned: true },
+        { id: 2002, name: "日本加油站自助手續", detail: "認明紅色「Regular」汽油，螢幕可選繁體中文，可用信用卡付款。", pinned: false }
     ];
-    const defaultHotels = [{ id: 1, name: "博多中央大酒店", addr: "福岡市博多區博多站中央街 4-5", time: "CI: 15:00 / CO: 11:00", maps: "https://maps.app.goo.gl/fukuoka-hotel", dates: [1, 2, 3] }];
-    const defaultShoppings = [{ id: 1, name: "茅乃舍高湯包", loc: "博多車站 DEACUT", img: "🍜", maps: "https://maps.app.goo.gl/kayanoya" }];
     
-    // 預設兩個探索景點，並自帶兩個手動輸入的細分區
+    // ✨ 依照指示：為您預先植入的 3 大日本福岡飯店數據 (2026.07)
+    const defaultHotels = [
+        { id: 3001, name: "美居佐賀唐津酒店", addr: "佐賀縣唐津市東唐津4-9-20", time: "CI: 15:00 / CO: 11:00", maps: "https://maps.google.com", dates: [1] }, // 25/7 (D1)
+        { id: 3002, name: "夜燈見莊", addr: "佐賀縣藤津郡太良町大字大浦丙海洋高地", time: "CI: 15:00 / CO: 10:00", maps: "https://maps.google.com", dates: [2] }, // 26/7 (D2)
+        { id: 3003, name: "福岡蒙特利酒店", addr: "福岡市中央區渡邊通3丁目4番13號", time: "CI: 15:00 / CO: 11:00", maps: "https://maps.google.com", dates: [3, 4, 5, 6, 7] } // 27/7~31/7 (D3-D7)
+    ];
+    
+    const defaultShoppings = [{ id: 4001, name: "茅乃舍高湯包", loc: "博多車站 DEACUT", img: "🍜", maps: "https://maps.app.goo.gl/kayanoya" }];
     const defaultExplores = [
-        { id: 1, name: "太宰府天滿宮", region: "太宰府", subregion: "參道商圈", cate: "景點🏖️", addr: "福岡縣太宰府市宰府4丁目7-1", maps: "https://maps.app.goo.gl/dazaifu" },
-        { id: 2, name: "櫻井二見浦 夫婦岩", region: "糸島", subregion: "志摩櫻井", cate: "景點🏖️", addr: "福岡縣糸島市志摩櫻井", maps: "https://maps.app.goo.gl/itoshima" }
+        { id: 5001, name: "太宰府天滿宮", region: "太宰府", subregion: "參道商圈", cate: "景點🏖️", addr: "福岡縣太宰府市宰府4丁目7-1", maps: "https://maps.app.goo.gl/dazaifu" },
+        { id: 5002, name: "櫻井二見浦 夫婦岩", region: "糸島", subregion: "志摩櫻井", cate: "景點🏖️", addr: "福岡縣糸島市志摩櫻井", maps: "https://maps.app.goo.gl/itoshima" }
     ];
 
-    // 2026.07 日期對應
     const dayMapping = {
         1: { dateStr: "2026.07.25", ddmm: "25/07", temp: "32°C / 25°C", dress: "👕 盛夏酷暑！請穿著透氣夏裝、佩戴墨鏡與防曬帽。" },
         2: { dateStr: "2026.07.26", ddmm: "26/07", temp: "31°C / 24°C", dress: "🚗 自駕多雲日，車內冷氣強，建議攜帶薄襯衫防風。" },
@@ -586,7 +585,6 @@
         7: { dateStr: "2026.07.31", ddmm: "31/07", temp: "29°C / 22°C", dress: "✈️ 回程返港，著重輕便舒適的機場與機艙穿著。" }
     };
 
-    // --- LocalStorage 核心控制 ---
     window.onload = function() {
         const localIti = localStorage.getItem('fk_itineraries');
         const localGui = localStorage.getItem('fk_guides');
@@ -600,7 +598,6 @@
         shoppings = localShop ? JSON.parse(localShop) : defaultShoppings;
         explores = localExp ? JSON.parse(localExp) : defaultExplores;
 
-        // 動態計算並建立細分區下拉選單
         updateSubregionDropdown();
         renderAll();
     };
@@ -617,62 +614,186 @@
         renderItinerary(); renderGuides(); renderHotels(); renderShopping(); renderExplore();
     }
 
-    // --- ✨ 核心演算法：萃取使用者輸入過的細分區，生成選單選項 ---
     function updateSubregionDropdown() {
         const selectEl = document.getElementById('filter-subregion');
-        
-        // 紀錄使用者當前選定的值，防止重整選單時被洗掉
         const currentValue = selectEl.value;
-
-        // 清空除了「所有細分區」之外的所有選項
         selectEl.innerHTML = '<option value="">所有細分區</option>';
-
-        // 收集目前 explores 資料庫內所有的 subregion 欄位，過濾掉空值並去重複（Unique）
-        let subregions = explores
-            .map(e => e.subregion ? e.subregion.trim() : "")
-            .filter(sub => sub !== "");
-        
-        let uniqueSubregions = [...new Set(subregions)];
-
-        // 將不重複的細分區動態生成為 option 標籤
+        let uniqueSubregions = [...new Set(explores.map(e => e.subregion ? e.subregion.trim() : "").filter(sub => sub !== ""))];
         uniqueSubregions.forEach(sub => {
-            const opt = document.createElement('option');
-            opt.value = sub;
-            opt.textContent = sub;
-            selectEl.appendChild(opt);
+            const opt = document.createElement('option'); opt.value = sub; opt.textContent = sub; selectEl.appendChild(opt);
         });
-
-        // 還原先前使用者選取的過濾條件值
         selectEl.value = currentValue;
     }
 
-    // --- Tab & Day 控制 ---
-    function switchTab(tabId, el) {
-        document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-        document.getElementById('tab-' + tabId).classList.add('active');
-        el.classList.add('active');
+    // --- 介面控制群 ---
+    function deleteItem(type, id) {
+        if (type === 'itinerary') itineraries = itineraries.filter(i => i.id !== id);
+        if (type === 'guide') guides = guides.filter(g => g.id !== id);
+        if (type === 'hotel') hotels = hotels.filter(h => h.id !== id);
+        if (type === 'shopping') shoppings = shoppings.filter(s => s.id !== id);
+        if (type === 'explore') { explores = explores.filter(e => e.id !== id); updateSubregionDropdown(); }
+        saveAllData(); renderAll();
     }
 
-    function switchDay(dayNum) {
-        currentDay = dayNum;
-        document.querySelectorAll('.day-tab').forEach((tab, index) => {
-            tab.classList.toggle('active', index === (dayNum - 1));
-        });
-        renderItinerary();
-    }
-
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-    function getParkingAndGasInfo(cate) {
-        if (["食物", "景點", "活動", "景點🏖️", "餐廳🍴"].includes(cate)) {
-            return `P 附設 Times / 協定收費地下停車場 <br> G 附近 1km 內有 ENEOS 自助加油站`;
+    function moveOrder(type, index, direction) {
+        let arr = type === 'itinerary' ? itineraries.filter(item => item.day == currentDay) : (type === 'shopping' ? shoppings : explores);
+        let targetIndex = index + direction; if (targetIndex < 0 || targetIndex >= arr.length) return;
+        if (type === 'itinerary') {
+            let ac = itineraries.findIndex(i => i.id === arr[index].id), at = itineraries.findIndex(i => i.id === arr[targetIndex].id);
+            let temp = itineraries[ac]; itineraries[ac] = itineraries[at]; itineraries[at] = temp;
+        } else {
+            let temp = arr[index]; arr[index] = arr[targetIndex]; arr[targetIndex] = temp;
         }
-        return `P 市區多機械式塔停，請留意車高與車寬限制。`;
+        saveAllData(); renderAll();
     }
 
-    // --- 頁面模型渲染器 ---
+    // ==================== 🛠️ 全新核心功能：帶入原有資料的編輯器觸發點 ====================
+    function openEditModal(type, id) {
+        if (type === 'itinerary') {
+            let item = itineraries.find(i => i.id === id);
+            if(!item) return;
+            document.getElementById('iti-modal-title').textContent = "編輯行程卡片 ✏️";
+            document.getElementById('form-iti-id').value = item.id;
+            document.getElementById('form-iti-day').value = item.day;
+            document.getElementById('form-iti-time').value = item.time;
+            document.getElementById('form-iti-name').value = item.name;
+            document.getElementById('form-iti-desc').value = item.desc;
+            document.getElementById('form-iti-cate').value = item.cate;
+            document.getElementById('form-iti-tag').value = item.tag;
+            document.getElementById('form-iti-maps').value = item.maps;
+            openModal('modal-add-itinerary');
+        }
+        else if (type === 'hotel') {
+            let item = hotels.find(h => h.id === id);
+            if(!item) return;
+            document.getElementById('hotel-modal-title').textContent = "編輯酒店資訊 ✏️";
+            document.getElementById('form-hotel-id').value = item.id;
+            document.getElementById('form-hotel-name').value = item.name;
+            document.getElementById('form-hotel-addr').value = item.addr;
+            document.getElementById('form-hotel-time').value = item.time;
+            document.getElementById('form-hotel-maps').value = item.maps;
+            // 清空並重新打勾對應日期
+            let checkboxes = document.getElementsByName('hotel-days');
+            checkboxes.forEach(cb => { cb.checked = item.dates.includes(Number(cb.value)); });
+            openModal('modal-add-hotel');
+        }
+        else if (type === 'shopping') {
+            let item = shoppings.find(s => s.id === id);
+            if(!item) return;
+            document.getElementById('shop-modal-title').textContent = "編輯購物清單 ✏️";
+            document.getElementById('form-shop-id').value = item.id;
+            document.getElementById('form-shop-name').value = item.name;
+            document.getElementById('form-shop-loc').value = item.loc;
+            document.getElementById('form-shop-img').value = item.img;
+            document.getElementById('form-shop-maps').value = item.maps;
+            openModal('modal-add-shopping');
+        }
+        else if (type === 'explore') {
+            let item = explores.find(e => e.id === id);
+            if(!item) return;
+            document.getElementById('exp-modal-title').textContent = "編輯想去景點 ✏️";
+            document.getElementById('form-exp-id').value = item.id;
+            document.getElementById('form-exp-name').value = item.name;
+            document.getElementById('form-exp-region').value = item.region;
+            document.getElementById('form-exp-sub').value = item.subregion;
+            document.getElementById('form-exp-cate').value = item.cate;
+            document.getElementById('form-exp-addr').value = item.addr;
+            document.getElementById('form-exp-maps').value = item.maps;
+            openModal('modal-add-explore');
+        }
+    }
+
+    // ==================== 表單提交接收邏輯 (智慧感應：新增/編輯整合型) ====================
+    function submitItinerary() {
+        const id = document.getElementById('form-iti-id').value;
+        const day = document.getElementById('form-iti-day').value;
+        const time = document.getElementById('form-iti-time').value || "12:00";
+        const name = document.getElementById('form-iti-name').value || "未命名行程";
+        const desc = document.getElementById('form-iti-desc').value || "";
+        const cate = document.getElementById('form-iti-cate').value;
+        const tag = document.getElementById('form-iti-tag').value;
+        const maps = document.getElementById('form-iti-maps').value || "https://maps.google.com";
+
+        if(id) { // 編輯模式
+            let index = itineraries.findIndex(i => i.id == id);
+            if(index !== -1) itineraries[index] = { id: Number(id), day, time, name, desc, cate, tag, maps };
+        } else { // 全新新增模式
+            itineraries.push({ id: Date.now(), day, time, name, desc, cate, tag, maps });
+        }
+        // 重設表單狀態
+        document.getElementById('form-iti-id').value = "";
+        document.getElementById('iti-modal-title').textContent = "增加一個新行程";
+        saveAllData(); closeModal('modal-add-itinerary'); renderItinerary();
+    }
+
+    function submitHotel() {
+        const id = document.getElementById('form-hotel-id').value;
+        const name = document.getElementById('form-hotel-name').value || "福岡大酒店";
+        const addr = document.getElementById('form-hotel-addr').value || "福岡市";
+        const time = document.getElementById('form-hotel-time').value;
+        const maps = document.getElementById('form-hotel-maps').value || "https://maps.google.com";
+
+        let checkedDays = [];
+        let checkboxes = document.getElementsByName('hotel-days');
+        checkboxes.forEach(cb => { if(cb.checked) checkedDays.push(Number(cb.value)); });
+        if(checkedDays.length === 0) { alert('請至少選擇一天的入住日期！'); return; }
+
+        if(id) { // 編輯模式
+            let index = hotels.findIndex(h => h.id == id);
+            if(index !== -1) hotels[index] = { id: Number(id), name, addr, time, maps, dates: checkedDays };
+        } else { // 新增模式
+            hotels.push({ id: Date.now(), name, addr, time, maps, dates: checkedDays });
+        }
+        document.getElementById('form-hotel-id').value = "";
+        document.getElementById('hotel-modal-title').textContent = "Add Hotel";
+        saveAllData(); closeModal('modal-add-hotel'); renderAll();
+    }
+
+    function submitShopping() {
+        const id = document.getElementById('form-shop-id').value;
+        const name = document.getElementById('form-shop-name').value || "名產伴手禮";
+        const loc = document.getElementById('form-shop-loc').value || "租車/免稅店";
+        const img = document.getElementById('form-shop-img').value;
+        const maps = document.getElementById('form-shop-maps').value || "https://maps.google.com";
+
+        if(id) { // 編輯模式
+            let index = shoppings.findIndex(s => s.id == id);
+            if(index !== -1) shoppings[index] = { id: Number(id), name, loc, img, maps };
+        } else { // 新增模式
+            shoppings.push({ id: Date.now(), name, loc, img, maps });
+        }
+        document.getElementById('form-shop-id').value = "";
+        document.getElementById('shop-modal-title').textContent = "Need to buy";
+        saveAllData(); closeModal('modal-add-shopping'); renderShopping();
+    }
+
+    function submitExplore() {
+        const id = document.getElementById('form-exp-id').value;
+        const name = document.getElementById('form-exp-name').value || "候選景點";
+        const region = document.getElementById('form-exp-region').value;
+        const subregion = document.getElementById('form-exp-sub').value.trim() || "通用區域";
+        const cate = document.getElementById('form-exp-cate').value;
+        const addr = document.getElementById('form-exp-addr').value || "九州福岡";
+        const maps = document.getElementById('form-exp-maps').value || "https://maps.google.com";
+
+        if(id) { // 編輯模式
+            let index = explores.findIndex(e => e.id == id);
+            if(index !== -1) explores[index] = { id: Number(id), name, region, subregion, cate, addr, maps };
+        } else { // 新增模式
+            explores.push({ id: Date.now(), name, region, subregion, cate, addr, maps });
+        }
+        document.getElementById('form-exp-id').value = "";
+        document.getElementById('exp-modal-title').textContent = "Add 想去嘅景點";
+        saveAllData(); updateSubregionDropdown(); closeModal('modal-add-explore'); renderExplore();
+    }
+
+    function submitSomething() { 
+        const name = document.getElementById('form-some-name').value || "自駕提示說明", detail = document.getElementById('form-some-detail').value || ""; 
+        guides.push({ id: Date.now(), name, detail, pinned: false }); 
+        saveAllData(); closeModal('modal-add-something'); renderGuides(); 
+    }
+
+    // ==================== 畫面生成渲染引擎區塊 ====================
     function renderItinerary() {
         const list = document.getElementById('itinerary-list'); list.innerHTML = '';
         let dayIti = itineraries.filter(item => item.day == currentDay);
@@ -694,22 +815,18 @@
                 <span class="tag ${item.tag}">${item.tag === 'tag-eat' ? '必吃' : item.tag === 'tag-buy' ? '必買' : '必拍'}</span>
                 <h3 style="margin: 8px 0 4px 0; font-size:16px;">⏱️ ${item.time} - ${item.name}</h3>
                 <p style="font-size: 13px; color: var(--text-dark); margin-bottom: 8px;">${item.desc}</p>
-                <div style="background: #F4F6FB; padding: 8px; border-radius: 8px; font-size: 11px; color: #555; margin-bottom:8px;">
-                    ${getParkingAndGasInfo(item.cate)}
-                </div>
+                <div style="background: #F4F6FB; padding: 8px; border-radius: 8px; font-size: 11px; color: #555; margin-bottom:8px;">${getParkingAndGasInfo(item.cate)}</div>
                 <a href="${item.maps}" target="_blank" class="btn-nav"><i class="fa-solid fa-location-arrow"></i> Google Maps</a>
                 <div class="drag-controls">
+                    <!-- ✨ 新增的行程卡片編輯按鈕 -->
+                    <button class="drag-btn edit-btn" onclick="openEditModal('itinerary', ${item.id})"><i class="fa-regular fa-pen-to-square"></i> 編輯</button>
                     <button class="drag-btn" onclick="moveOrder('itinerary', ${index}, -1)"><i class="fa-solid fa-arrow-up"></i> 上移</button>
                     <button class="drag-btn" onclick="moveOrder('itinerary', ${index}, 1)"><i class="fa-solid fa-arrow-down"></i> 下移</button>
                 </div>
             `;
             list.appendChild(card);
         });
-
-        const tipBox = document.getElementById('weather-tip-box');
-        if (dayMapping[currentDay]) {
-            tipBox.innerHTML = `<strong>日期：${dayMapping[currentDay].dateStr} (${dayMapping[currentDay].temp})</strong><br>${dayMapping[currentDay].dress}`;
-        }
+        if (dayMapping[currentDay]) document.getElementById('weather-tip-box').innerHTML = `<strong>日期：${dayMapping[currentDay].dateStr} (${dayMapping[currentDay].temp})</strong><br>${dayMapping[currentDay].dress}`;
     }
 
     function renderGuides() {
@@ -722,15 +839,22 @@
         });
     }
 
-    function togglePinGuide(id) { let g = guides.find(item => item.id === id); if(g) g.pinned = !g.pinned; saveAllData(); renderGuides(); }
-    function moveGuideOrder(index, direction) { let targetIndex = index + direction; if (targetIndex < 0 || targetIndex >= guides.length) return; let sortedGuides = [...guides].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)); let temp = sortedGuides[index]; sortedGuides[index] = sortedGuides[targetIndex]; sortedGuides[targetIndex] = temp; guides = sortedGuides; saveAllData(); renderGuides(); }
-
     function renderHotels() {
         const list = document.getElementById('hotel-list'); list.innerHTML = '';
         hotels.forEach(h => {
             let dateLabels = h.dates.map(d => dayMapping[d] ? dayMapping[d].ddmm : d).join(', ');
             const card = document.createElement('div'); card.className = 'card';
-            card.innerHTML = `<button class="card-close-btn" onclick="deleteItem('hotel', ${h.id})"><i class="fa-solid fa-xmark"></i></button><h3 style="font-size:16px; color:var(--primary);"><i class="fa-solid fa-hotel"></i> ${h.name}</h3><p style="font-size:13px; margin: 6px 0 2px 0;"><b>地址：</b>${h.addr}</p><p style="font-size:12px; color:var(--text-muted);"><b>入住日期：</b>${dateLabels}</p><p style="font-size:12px; color:var(--text-muted);"><b>說明：</b>${h.time}</p><a href="${h.maps}" target="_blank" class="btn-nav"><i class="fa-solid fa-location-arrow"></i> 導航酒店</a>`;
+            card.innerHTML = `
+                <button class="card-close-btn" onclick="deleteItem('hotel', ${h.id})"><i class="fa-solid fa-xmark"></i></button>
+                <h3 style="font-size:16px; color:var(--primary);"><i class="fa-solid fa-hotel"></i> ${h.name}</h3>
+                <p style="font-size:13px; margin: 6px 0 2px 0;"><b>地址：</b>${h.addr}</p>
+                <p style="font-size:12px; color:var(--text-muted);"><b>入住日期：</b>${dateLabels}</p>
+                <a href="${h.maps}" target="_blank" class="btn-nav"><i class="fa-solid fa-location-arrow"></i> 導航酒店</a>
+                <div class="drag-controls">
+                    <!-- ✨ 新增的酒店卡片編輯按鈕 -->
+                    <button class="drag-btn edit-btn" onclick="openEditModal('hotel', ${h.id})"><i class="fa-regular fa-pen-to-square"></i> 編輯</button>
+                </div>
+            `;
             list.appendChild(card);
         });
     }
@@ -739,36 +863,43 @@
         const list = document.getElementById('shopping-list'); list.innerHTML = '';
         shoppings.forEach((s, index) => {
             const card = document.createElement('div'); card.className = 'card';
-            card.innerHTML = `<button class="card-close-btn" onclick="deleteItem('shopping', ${s.id})"><i class="fa-solid fa-xmark"></i></button><div class="shopping-card-body"><div class="shopping-info"><h4>${s.name}</h4><p style="font-size:12px; color:var(--text-muted); margin:4px 0 6px 0;"><i class="fa-solid fa-shop"></i> ${s.loc}</p><a href="${s.maps}" target="_blank" class="btn-nav" style="margin-top:0;"><i class="fa-solid fa-location-arrow"></i> 購買地導航</a></div><div class="shopping-img-placeholder"><span style="font-size:28px;">${s.img}</span><span>Item Pic</span></div></div><div class="drag-controls"><button class="drag-btn" onclick="moveOrder('shopping', ${index}, -1)"><i class="fa-solid fa-arrow-up"></i></button><button class="drag-btn" onclick="moveOrder('shopping', ${index}, 1)"><i class="fa-solid fa-arrow-down"></i></button></div>`;
+            card.innerHTML = `
+                <button class="card-close-btn" onclick="deleteItem('shopping', ${s.id})"><i class="fa-solid fa-xmark"></i></button>
+                <div class="shopping-card-body">
+                    <div class="shopping-info">
+                        <h4>${s.name}</h4><p style="font-size:12px; color:var(--text-muted); margin:4px 0 6px 0;"><i class="fa-solid fa-shop"></i> ${s.loc}</p>
+                        <a href="${s.maps}" target="_blank" class="btn-nav" style="margin-top:0;"><i class="fa-solid fa-location-arrow"></i> 導航</a>
+                    </div>
+                    <div class="shopping-img-placeholder"><span style="font-size:28px;">${s.img}</span><span>Item Pic</span></div>
+                </div>
+                <div class="drag-controls">
+                    <!-- ✨ 新增的購物卡片編輯按鈕 -->
+                    <button class="drag-btn edit-btn" onclick="openEditModal('shopping', ${s.id})"><i class="fa-regular fa-pen-to-square"></i> 編輯</button>
+                    <button class="drag-btn" onclick="moveOrder('shopping', ${index}, -1)"><i class="fa-solid fa-arrow-up"></i></button>
+                    <button class="drag-btn" onclick="moveOrder('shopping', ${index}, 1)"><i class="fa-solid fa-arrow-down"></i></button>
+                </div>
+            `;
             list.appendChild(card);
         });
     }
 
     function renderExplore() {
         const list = document.getElementById('explore-list'); list.innerHTML = '';
-        
-        // 抓取目前篩選器的值值
         const rFilter = document.getElementById('filter-region').value;
         const sFilter = document.getElementById('filter-subregion').value;
         const cFilter = document.getElementById('filter-cate').value;
 
-        // 進行三維數據精準過濾
-        let filtered = explores.filter(e => {
-            return (!rFilter || e.region === rFilter) &&
-                   (!sFilter || (e.subregion && e.subregion.trim() === sFilter.trim())) &&
-                   (!cFilter || e.cate === cFilter);
-        });
-
+        let filtered = explores.filter(e => (!rFilter || e.region === rFilter) && (!sFilter || (e.subregion && e.subregion.trim() === sFilter.trim())) && (!cFilter || e.cate === cFilter));
         filtered.forEach((e, index) => {
             const card = document.createElement('div'); card.className = 'card';
             card.innerHTML = `
                 <button class="card-close-btn" onclick="deleteItem('explore', ${e.id})"><i class="fa-solid fa-xmark"></i></button>
-                <span class="tag tag-cate">${e.region} · ${e.subregion || '未分區'}</span>
-                <span class="tag tag-photo">${e.cate}</span>
-                <h4 style="margin-top:6px; font-size:15px;">${e.name}</h4>
-                <p style="font-size:12px; color:var(--text-muted); margin: 4px 0 8px 0;">${e.addr}</p>
-                <a href="${e.maps}" target="_blank" class="btn-nav" style="margin-top:0;"><i class="fa-solid fa-location-arrow"></i> 導航景點</a>
+                <span class="tag tag-cate">${e.region} · ${e.subregion || '未分區'}</span><span class="tag tag-photo">${e.cate}</span>
+                <h4 style="margin-top:6px; font-size:15px;">${e.name}</h4><p style="font-size:12px; color:var(--text-muted); margin: 4px 0 8px 0;">${e.addr}</p>
+                <a href="${e.maps}" target="_blank" class="btn-nav" style="margin-top:0;"><i class="fa-solid fa-location-arrow"></i> 導航</a>
                 <div class="drag-controls">
+                    <!-- ✨ 新增的景點卡片編輯按鈕 -->
+                    <button class="drag-btn edit-btn" onclick="openEditModal('explore', ${e.id})"><i class="fa-regular fa-pen-to-square"></i> 編輯</button>
                     <button class="drag-btn" onclick="moveOrder('explore', ${index}, -1)"><i class="fa-solid fa-arrow-up"></i></button>
                     <button class="drag-btn" onclick="moveOrder('explore', ${index}, 1)"><i class="fa-solid fa-arrow-down"></i></button>
                 </div>
@@ -777,89 +908,14 @@
         });
     }
 
+    // --- 工具計算庫 ---
+    function switchTab(tabId, el) { document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active')); document.getElementById('tab-' + tabId).classList.add('active'); el.classList.add('active'); }
+    function switchDay(dayNum) { currentDay = dayNum; document.querySelectorAll('.day-tab').forEach((tab, index) => { tab.classList.toggle('active', index === (dayNum - 1)); }); renderItinerary(); }
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function filterExplore() { renderExplore(); }
-
-    // --- 資料變動存檔控制中心 ---
-    function deleteItem(type, id) {
-        if (type === 'itinerary') itineraries = itineraries.filter(i => i.id !== id);
-        if (type === 'guide') guides = guides.filter(g => g.id !== id);
-        if (type === 'hotel') hotels = hotels.filter(h => h.id !== id);
-        if (type === 'shopping') shoppings = shoppings.filter(s => s.id !== id);
-        if (type === 'explore') {
-            explores = explores.filter(e => e.id !== id);
-            updateSubregionDropdown(); // 刪除卡片後同步校正細分區清單
-        }
-        saveAllData(); renderAll();
-    }
-
-    function moveOrder(type, index, direction) {
-        let arr = type === 'itinerary' ? itineraries.filter(item => item.day == currentDay) : (type === 'shopping' ? shoppings : explores);
-        let targetIndex = index + direction; if (targetIndex < 0 || targetIndex >= arr.length) return;
-        if (type === 'itinerary') {
-            let ac = itineraries.findIndex(i => i.id === arr[index].id), at = itineraries.findIndex(i => i.id === arr[targetIndex].id);
-            let temp = itineraries[ac]; itineraries[ac] = itineraries[at]; itineraries[at] = temp;
-        } else {
-            let temp = arr[index]; arr[index] = arr[targetIndex]; arr[targetIndex] = temp;
-        }
-        saveAllData(); renderAll();
-    }
-
-    // --- 表單提交對接功能組 ---
-    function submitItinerary() { 
-        const day = document.getElementById('form-iti-day').value, time = document.getElementById('form-iti-time').value || "12:00", name = document.getElementById('form-iti-name').value || "未命名行程", desc = document.getElementById('form-iti-desc').value || "", cate = document.getElementById('form-iti-cate').value, tag = document.getElementById('form-iti-tag').value, maps = document.getElementById('form-iti-maps').value || "https://maps.google.com"; 
-        itineraries.push({ id: Date.now(), day, time, name, desc, cate, tag, maps }); 
-        saveAllData(); closeModal('modal-add-itinerary'); renderItinerary(); 
-    }
-    
-    function submitSomething() { 
-        const name = document.getElementById('form-some-name').value || "自駕提示說明", detail = document.getElementById('form-some-detail').value || ""; 
-        guides.push({ id: Date.now(), name, detail, pinned: false }); 
-        saveAllData(); closeModal('modal-add-something'); renderGuides(); 
-    }
-    
-    function submitHotel() {
-        const name = document.getElementById('form-hotel-name').value || "福岡大酒店"; const addr = document.getElementById('form-hotel-addr').value || "福岡市";
-        const time = document.getElementById('form-hotel-time').value; const maps = document.getElementById('form-hotel-maps').value || "https://maps.google.com";
-        let checkedDays = []; let checkboxes = document.getElementsByName('hotel-days');
-        checkboxes.forEach(cb => { if(cb.checked) checkedDays.push(Number(cb.value)); });
-        if(checkedDays.length === 0) { alert('請至少選擇一天的入住日期！'); return; }
-        hotels.push({ id: Date.now(), name, addr, time, maps, dates: checkedDays });
-        saveAllData(); closeModal('modal-add-hotel'); renderHotels(); renderItinerary(); 
-    }
-
-    function submitShopping() { 
-        const name = document.getElementById('form-shop-name').value || "名產伴手禮", loc = document.getElementById('form-shop-loc').value || "天神免稅店", img = document.getElementById('form-shop-img').value, maps = document.getElementById('form-shop-maps').value || "https://maps.google.com"; 
-        shoppings.push({ id: Date.now(), name, loc, img, maps }); 
-        saveAllData(); closeModal('modal-add-shopping'); renderShopping(); 
-    }
-    
-    function submitExplore() { 
-        const name = document.getElementById('form-exp-name').value || "夢幻候選名單", region = document.getElementById('form-exp-region').value;
-        // 擷取手動輸入之細分區字串
-        const subregion = document.getElementById('form-exp-sub').value.trim() || "通用區域"; 
-        const cate = document.getElementById('form-exp-cate').value;
-        const addr = document.getElementById('form-exp-addr').value || "九州福岡"; 
-        const maps = document.getElementById('form-exp-maps').value || "https://maps.google.com"; 
-
-        explores.push({ id: Date.now(), name, region, subregion, cate, addr, maps }); 
-        
-        saveAllData(); 
-        updateSubregionDropdown(); // 精準調用：將全新手動輸入的區域塞入頂部下拉選單中
-        closeModal('modal-add-explore'); 
-        renderExplore(); 
-    }
-
-    // --- 工具運算庫 ---
-    function convertCurrency(type) { 
-        const h = document.getElementById('calc-hkd'), j = document.getElementById('calc-jpy'); 
-        if (type === 'hkd') { if(h.value==="") {j.value=""; return;} j.value = Math.round(parseFloat(h.value)*exchangeRatejpy); } 
-        else { if(j.value==="") {h.value=""; return;} h.value = (parseFloat(j.value)/exchangeRatejpy).toFixed(2); } 
-    }
-    
-    function queryParkingAPI() { 
-        const b = document.getElementById('parking-search').value.trim(), r = document.getElementById('parking-api-result'); if(!b) { r.innerHTML = '❌ 請輸入查詢區域'; return; } r.innerHTML = `⏳ 正在連接 Times 停車場 API 系統...`; 
-        setTimeout(() => { r.innerHTML = `<strong>🅿️ Times 停車場 - ${b} 區 (2026.07 即時狀態)</strong><br>1. Times ${b} 第1車場：空車 (空あり) · 200日圓/30分<br>2. Times ${b} 第3立體車場：滿車 (満車) · 當日最高 1200日圓`; }, 500); 
-    }
+    function convertCurrency(type) { const h = document.getElementById('calc-hkd'), j = document.getElementById('calc-jpy'); if (type === 'hkd') { if(h.value==="") {j.value=""; return;} j.value = Math.round(parseFloat(h.value)*exchangeRatejpy); } else { if(j.value==="") {h.value=""; return;} h.value = (parseFloat(j.value)/exchangeRatejpy).toFixed(2); } }
+    function queryParkingAPI() { const b = document.getElementById('parking-search').value.trim(), r = document.getElementById('parking-api-result'); if(!b) { r.innerHTML = '❌ 請輸入查詢區域'; return; } r.innerHTML = `⏳ 正在連接 Times 停車場 API 系統...`; setTimeout(() => { r.innerHTML = `<strong>🅿️ Times 停車場 - ${b} 區 (2026.07 即時狀態)</strong><br>1. Times ${b} 第1車場：空車 (空あり) · 200日圓/30分<br>2. Times ${b} 第3立體車場：滿車 (満車) · 當日最高 1200日圓`; }, 500); }
 </script>
 </body>
 </html>
